@@ -1,0 +1,281 @@
+---
+title: "Análisis exploratorio de datos"
+subtitle: "Extrayendo significado del dato bruto"
+lang: es
+author:
+  - name: Rainer Palm
+    email: rdppetrizzo@gmail.org
+    affiliations: Laboratorio Venezolano de Inteligencia Artificial
+format:
+  revealjs: 
+    theme: [default, custom.scss]
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: data/images/logo_lia.png
+    footer: '[Laboratorio Venezolano de Inteligencia Artificial](https://www.lia-ve.org)'
+---
+
+## Introducción
+
+En esta sesión, desarrollaremos un ejemplo de como se realiza un analísis exploratorio de datos (AED) con Python, trabajando con datos reales del Índice de Calidad del Aire de Ciudad de México. 
+
+Verás como se realiza cada paso de este proceso, desde su **carga** y **preparación**, hasta su **visualización**, culminando con un **análisis** de correlaciones mediante un modelo de regresión lineal.
+
+## Objetivos
+
+1. Cargar y hacer una revisión de los datos
+
+2. Limpiar, imputar o normalizar datos
+
+3. Hacer visualizaciones y análisis generales de los datos
+
+4. Emplear gráficos más especificos para ver relaciones, distribuciones y tendencias
+
+5. Detección de patrones y correlaciones
+
+6. Interpretación y generación de hipótesis
+
+## Análisis exploratorio de datos
+
+Es un proceso crítico en el cual se **exploran e investigan** los datos sin suposiciones previas para llegar a una comprensión más completa de estos (y sus patrones, relaciones, características, etc.). 
+
+Así se puede decidir de manera informada:
+
+- Que variables son **relevantes**?
+
+- Como debería **tratar** las variables?
+
+- Que **técnicas estadísticas o modelos** se deberían utilizar con estos datos?
+
+## Ejemplo de carga
+
+``` python 
+# Este conjunto de datos se puede descargar
+# directamente desde Python.
+from urllib.request import urlretrieve
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
+# Se descargan todos los archivos excel para los años 1996-2023.
+for year in tqdm(range(1996, 2023)):
+    url = f"http://www.aire.cdmx.gob.mx/descargas/basesimeca/imeca{year}.xls"
+    filename = f"data/{Path(url).name}"
+    urlretrieve(url, filename)
+
+# Se crea una lista de dataframes a partir de los archivos descargados.
+dfs = []
+for year in tqdm(range(1996, 2023)):
+    df = pd.read_excel(f"data/imeca{year}.xls")
+    dfs.append(df)
+```
+
+## Vista preliminar del dataframe {.smaller}
+
+```{python}
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
+dfs = []
+for year in tqdm(range(1996, 2023)):
+    df = pd.read_excel(f"data/imeca{year}.xls")
+    dfs.append(df)
+
+df_imeca = pd.concat(dfs, ignore_index=True)
+df_imeca
+```
+
+---
+
+```{python}
+df_imeca.info()
+```
+
+Hay varios problemas: 
+
+- Cantidad relativamente grande de valores nulos para algunas columnas
+
+- Los nombres de las columnas no han sido capitalizados uniformemente.
+
+- Los valores nulos acá están marcados con $-99$.
+
+## Combinación de columnas similares
+
+- Capitalizaciones no-uniformes
+
+```{python}
+#| echo: true
+df_imeca.Fecha = df_imeca.Fecha.combine_first(df_imeca.FECHA)
+
+zonas = ["Noroeste", "Noreste", "Centro", "Suroeste", "Sureste"]
+for zona in zonas:
+    df_imeca[f"{zona} Ozono"] = df_imeca[f"{zona} Ozono"].combine_first(
+        df_imeca[f"{zona} ozono"]
+    )
+
+df_imeca = df_imeca.drop(columns=["FECHA"] + [f"{zona} ozono" for zona in zonas])
+```
+
+- Unidades de fecha-hora
+
+```{python}
+#| echo: true
+## Específicamos que la unidad es en horas al momento de realizar la conversión
+df_imeca.Hora = pd.to_timedelta(df_imeca.Hora, unit='h')
+
+df_imeca["Fecha-Hora"] = df_imeca.Fecha + df_imeca.Hora
+## Esto sumará el valor de Fecha con el valor de Hora para cada índice.
+df_imeca = df_imeca.drop(columns=["Fecha", "Hora"])
+## Borramos columnas innecesarias de nuevo.
+```
+
+## Dataframe post-procesamiento {.smaller}
+
+```{python}
+df_imeca
+```
+
+## Detección de valores faltantes
+
+- Marca de valores nulos:
+
+```{python}
+#| echo: true
+df_imeca = df_imeca.replace(-99, np.nan)
+```
+
+- Numero de valores nulos por columna:
+
+```{python}
+df_imeca.isnull().sum()
+```
+
+## Transformaciones iniciales
+
+Es posible que el conjunto de datos tenga variables que estén en diferentes escalas. Por ejemplo. que los contaminantes aquí tengan diferentes rangos de magnitud.
+
+En estos casos, podemos aplicar una **normalización**, facilitada por la libreria scikit-learn.
+
+Si se dejan los datos sin cambiar, podríamos ver tendencias erroneas en el análisis.
+
+## Normalización
+
+```{python}
+#| echo: true
+# MinMaxScaler realiza una transformación lineal para todo el conjunto de datos,
+# por defecto resultando en que todos se transformen en valores desde el 0 al 1.
+from sklearn.preprocessing import MinMaxScaler
+contaminantes = [
+    'Noroeste Ozono',
+    'Noroeste dióxido de azufre',
+    'Noroeste dióxido de nitrógeno',
+    'Noroeste monóxido de carbono',
+    'Noroeste PM10'
+]
+scaler = MinMaxScaler()
+
+# Datos después de la normalización (van del 0 al 1)
+scaler.fit_transform(df_imeca[contaminantes])
+```
+
+## Eliminación de outliers
+
+Los valores atípicos pueden hacer que extraigamos suposiciones incorrectas de los datos. Para detectarlos, podemos utilizar el método del rango intercuartílico:
+
+```python
+
+lista_pm10 = [i for i in df_imeca.columns.tolist() if "PM10" in i]
+
+# Método IQR para eliminar outliers
+Q1 = df_imeca[lista_pm10].quantile(0.25)
+Q3 = df_imeca[lista_pm10].quantile(0.75)
+IQR = Q3 - Q1
+
+# Definir los límites de detección de outliers
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# Filtrar outliers
+df_imeca[(df_imeca[lista_pm10] >= lower_bound) & (df_imeca[lista_pm10] <= upper_bound)]
+```
+
+## Clasificación de datos numéricos
+
+Dependiendo del tipo de análisis o herramientas que se deseen utilizar para este, puede ser necesaria la creación de categorias dentro del conjunto de datos. 
+
+```{python}
+#| echo: true
+
+# Aplicar una función que clasifique la calidad del aire en 'Buena', 'Mala', 'Peligrosa'
+def clasificar_calidad(pm10):
+    if pm10 < 50:
+        return 'Buena'
+    elif 50 <= pm10 < 100:
+        return 'Mala'
+    else:
+        return 'Peligrosa'
+
+df_imeca['Sureste PM10'].apply(clasificar_calidad)
+```
+
+## Codificación de variables categóricas:
+
+Para algunas tareas de predicción, es necesario transformar variables categóricas a númericas. Una tecnica común es la codificación one-hot, que convierte estás a una mascara de bits:
+
+```{python}
+#| echo: true
+# Convertir las variables categóricas a variables dummy (one-hot encoding)
+df_ohotest = pd.DataFrame.copy(df_imeca)
+df_ohotest['Noreste PM10'] = df_ohotest['Noreste PM10'].apply(clasificar_calidad)
+df_with_dummies = pd.get_dummies(df_ohotest, columns=['Noreste PM10'])
+df_with_dummies[df_with_dummies.columns[-3:]]
+
+```
+
+## Operaciones básicas con datasets y Pandas
+
+Post-revisión, necesitaremos usar algunos metodos básicos de Pandas para poder explorar los datos con mayor detalle.
+
+Principalmente, esto involucra el uso de **máscaras**:
+
+```{python}
+#| echo: true
+# Seleccionar columnas específicas (por ejemplo, variables de la zona Sureste)
+subset = df_imeca[[col for col in df_imeca.columns if "Sureste" in col]]
+subset.head(3)
+```
+
+---
+
+```{python}
+#| echo: true
+import datetime
+
+# Filtrar los datos por una fecha específica
+filtered_data = df_imeca[df_imeca['Fecha-Hora'] < np.datetime64("1997-01-01")]
+filtered_data.head(3)
+```
+
+## Agrupación de datos {.smaller}
+
+Nos podemos auxiliar también de un proceso de agrupación o agregación mediante Pandas. Esto permitirá resumir estádisticas, lo cual suele ser útil para verlos según periodos de tiempo o categorías:
+
+```{python}
+#| echo: true
+# Agrupar por mes y año
+df_imeca.groupby(df_imeca['Fecha-Hora'].dt.to_period('M')).mean()
+```
+
+## Ordenamiento de datos
+
+También podemos ordenar los datos en orden ascendiente o descendientes según uno o varios campos en Pandas, de la siguiente manera:
+
+```{python}
+# Ordenar los datos por el nivel de Ozono en el Noroeste de mayor a menor
+df_imeca.sort_values(by='Noroeste Ozono', ascending=False)
+```
