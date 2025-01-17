@@ -212,6 +212,7 @@ Dependiendo del tipo de análisis o herramientas que se deseen utilizar para est
 #| echo: true
 
 # Aplicar una función que clasifique la calidad del aire en 'Buena', 'Mala', 'Peligrosa'
+# Estas clasificaciones vienen de la Agencia de Protección Ambiental de Estados Unidos, y son distintas para cada campo.
 def clasificar_calidad(pm10):
     if pm10 < 50:
         return 'Buena'
@@ -220,7 +221,16 @@ def clasificar_calidad(pm10):
     else:
         return 'Peligrosa'
 
-df_imeca['Sureste PM10'].apply(clasificar_calidad)
+sureste_pm10_clasificado = df_imeca['Sureste PM10'].apply(clasificar_calidad)
+sureste_pm10_clasificado
+```
+
+---
+
+```{python}
+#| echo: true
+sureste_pm10_clasificado.value_counts().plot(kind='bar')
+
 ```
 
 ## Codificación de variables categóricas:
@@ -268,7 +278,15 @@ Nos podemos auxiliar también de un proceso de agrupación o agregación mediant
 ```{python}
 #| echo: true
 # Agrupar por mes y año
-df_imeca.groupby(df_imeca['Fecha-Hora'].dt.to_period('M')).mean()
+grouped_df = df_imeca.groupby(df_imeca['Fecha-Hora'].dt.to_period('M')).mean()
+```
+
+```{python}
+#| echo: true
+grouped_df.drop("Fecha-Hora",axis=1,inplace=True)
+sureste_columns = [i for i in grouped_df.columns if "Sureste" in i]
+grouped_df = grouped_df.reset_index().set_index("Fecha-Hora")
+grouped_df[sureste_columns][grouped_df.index < "2000-01-01"].plot()
 ```
 
 ## Ordenamiento de datos
