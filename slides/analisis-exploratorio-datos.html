@@ -266,8 +266,8 @@ Rainer Palm
 </section>
 <section id="vista-preliminar-del-dataframe" class="slide level2 smaller">
 <h2>Vista preliminar del dataframe</h2>
-<div id="f9d96647" class="cell" data-execution_count="1">
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div id="74399874" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="30">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -585,7 +585,7 @@ Rainer Palm
 </section>
 <section class="slide level2">
 
-<div id="3ae646a5" class="cell" data-execution_count="2">
+<div id="dcb9a335" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
 RangeIndex: 227016 entries, 0 to 227015
@@ -646,7 +646,7 @@ memory usage: 65.8 MB</code></pre>
 <ul>
 <li>Capitalizaciones no-uniformes</li>
 </ul>
-<div id="d2196dcb" class="cell" data-execution_count="3">
+<div id="1856db6c" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href=""></a>df_imeca.Fecha <span class="op">=</span> df_imeca.Fecha.combine_first(df_imeca.FECHA)</span>
 <span id="cb3-2"><a href=""></a></span>
 <span id="cb3-3"><a href=""></a>zonas <span class="op">=</span> [<span class="st">"Noroeste"</span>, <span class="st">"Noreste"</span>, <span class="st">"Centro"</span>, <span class="st">"Suroeste"</span>, <span class="st">"Sureste"</span>]</span>
@@ -660,7 +660,7 @@ memory usage: 65.8 MB</code></pre>
 <ul>
 <li>Unidades de fecha-hora</li>
 </ul>
-<div id="b8a9199c" class="cell" data-execution_count="4">
+<div id="14e0962d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="co">## Específicamos que la unidad es en horas al momento de realizar la conversión</span></span>
 <span id="cb4-2"><a href=""></a>df_imeca.Hora <span class="op">=</span> pd.to_timedelta(df_imeca.Hora, unit<span class="op">=</span><span class="st">'h'</span>)</span>
 <span id="cb4-3"><a href=""></a></span>
@@ -672,8 +672,8 @@ memory usage: 65.8 MB</code></pre>
 </section>
 <section id="dataframe-post-procesamiento" class="slide level2 smaller">
 <h2>Dataframe post-procesamiento</h2>
-<div id="033b5cfb" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div id="8268905f" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="34">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -994,14 +994,14 @@ memory usage: 65.8 MB</code></pre>
 <ul>
 <li>Marca de valores nulos:</li>
 </ul>
-<div id="0e91a025" class="cell" data-execution_count="6">
+<div id="2e207287" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a>df_imeca <span class="op">=</span> df_imeca.replace(<span class="op">-</span><span class="dv">99</span>, np.nan)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Numero de valores nulos por columna:</li>
 </ul>
-<div id="86efb522" class="cell" data-execution_count="7">
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="e66e39c6" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="36">
 <pre><code>Noroeste Ozono                     1579
 Noroeste dióxido de azufre            4
 Noroeste dióxido de nitrógeno      1569
@@ -1045,7 +1045,7 @@ dtype: int64</code></pre>
 </section>
 <section id="normalización" class="slide level2">
 <h2>Normalización</h2>
-<div id="b37264b8" class="cell" data-execution_count="8">
+<div id="55a13005" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="co"># MinMaxScaler realiza una transformación lineal para todo el conjunto de datos,</span></span>
 <span id="cb7-2"><a href=""></a><span class="co"># por defecto resultando en que todos se transformen en valores desde el 0 al 1.</span></span>
 <span id="cb7-3"><a href=""></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
@@ -1060,7 +1060,7 @@ dtype: int64</code></pre>
 <span id="cb7-12"><a href=""></a></span>
 <span id="cb7-13"><a href=""></a><span class="co"># Datos después de la normalización (van del 0 al 1)</span></span>
 <span id="cb7-14"><a href=""></a>scaler.fit_transform(df_imeca[contaminantes])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="37">
 <pre><code>array([[0.07777778, 0.05649718, 0.08280255, 0.22580645, 0.12716763],
        [0.08148148, 0.05649718, 0.11464968, 0.20645161, 0.13294798],
        [0.09259259, 0.05649718, 0.14649682, 0.20645161, 0.13872832],
@@ -1090,169 +1090,15 @@ dtype: int64</code></pre>
 <span id="cb9-13"><a href=""></a><span class="co"># Filtrar outliers</span></span>
 <span id="cb9-14"><a href=""></a>df_imeca[(df_imeca[lista_pm10] <span class="op">&gt;=</span> lower_bound) <span class="op">&amp;</span> (df_imeca[lista_pm10] <span class="op">&lt;=</span> upper_bound)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="clasificación-de-datos-numéricos" class="slide level2">
-<h2>Clasificación de datos numéricos</h2>
-<p>Dependiendo del tipo de análisis o herramientas que se deseen utilizar para este, puede ser necesaria la creación de categorias dentro del conjunto de datos.</p>
-<div id="77758078" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="co"># Aplicar una función que clasifique la calidad del aire en 'Buena', 'Mala', 'Peligrosa'</span></span>
-<span id="cb10-2"><a href=""></a><span class="co"># Estas clasificaciones vienen de la Agencia de Protección Ambiental de Estados Unidos, y son distintas para cada campo.</span></span>
-<span id="cb10-3"><a href=""></a><span class="kw">def</span> clasificar_calidad(pm10):</span>
-<span id="cb10-4"><a href=""></a>    <span class="cf">if</span> pm10 <span class="op">&lt;</span> <span class="dv">50</span>:</span>
-<span id="cb10-5"><a href=""></a>        <span class="cf">return</span> <span class="st">'Buena'</span></span>
-<span id="cb10-6"><a href=""></a>    <span class="cf">elif</span> <span class="dv">50</span> <span class="op">&lt;=</span> pm10 <span class="op">&lt;</span> <span class="dv">100</span>:</span>
-<span id="cb10-7"><a href=""></a>        <span class="cf">return</span> <span class="st">'Mala'</span></span>
-<span id="cb10-8"><a href=""></a>    <span class="cf">else</span>:</span>
-<span id="cb10-9"><a href=""></a>        <span class="cf">return</span> <span class="st">'Peligrosa'</span></span>
-<span id="cb10-10"><a href=""></a></span>
-<span id="cb10-11"><a href=""></a>sureste_pm10_clasificado <span class="op">=</span> df_imeca[<span class="st">'Sureste PM10'</span>].<span class="bu">apply</span>(clasificar_calidad)</span>
-<span id="cb10-12"><a href=""></a>sureste_pm10_clasificado</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>0         Buena
-1         Buena
-2         Buena
-3         Buena
-4         Buena
-          ...  
-227011    Buena
-227012    Buena
-227013    Buena
-227014    Buena
-227015    Buena
-Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
-</div>
-</div>
-</section>
-<section class="slide level2">
-
-<div id="da0c8972" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a>sureste_pm10_clasificado.value_counts().plot(kind<span class="op">=</span><span class="st">'bar'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure>
-<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-11-output-1.png" width="823" height="476"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="codificación-de-variables-categóricas" class="slide level2">
-<h2>Codificación de variables categóricas:</h2>
-<p>Para algunas tareas de predicción, es necesario transformar variables categóricas a númericas. Una tecnica común es la codificación one-hot, que convierte estás a una mascara de bits:</p>
-<div id="b300f692" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="co"># Convertir las variables categóricas a variables dummy (one-hot encoding)</span></span>
-<span id="cb13-2"><a href=""></a>df_ohotest <span class="op">=</span> pd.DataFrame.copy(df_imeca)</span>
-<span id="cb13-3"><a href=""></a>df_ohotest[<span class="st">'Noreste PM10'</span>] <span class="op">=</span> df_ohotest[<span class="st">'Noreste PM10'</span>].<span class="bu">apply</span>(clasificar_calidad)</span>
-<span id="cb13-4"><a href=""></a>df_with_dummies <span class="op">=</span> pd.get_dummies(df_ohotest, columns<span class="op">=</span>[<span class="st">'Noreste PM10'</span>])</span>
-<span id="cb13-5"><a href=""></a>df_with_dummies[df_with_dummies.columns[<span class="op">-</span><span class="dv">3</span>:]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-
-<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header" style="text-align: right;">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Noreste PM10_Buena</th>
-<th data-quarto-table-cell-role="th">Noreste PM10_Mala</th>
-<th data-quarto-table-cell-role="th">Noreste PM10_Peligrosa</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">227011</td>
-<td>True</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">227012</td>
-<td>True</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">227013</td>
-<td>True</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">227014</td>
-<td>True</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">227015</td>
-<td>True</td>
-<td>False</td>
-<td>False</td>
-</tr>
-</tbody>
-</table>
-
-<p>227016 rows × 3 columns</p>
-</div>
-</div>
-</div>
-</section>
 <section id="operaciones-básicas-con-datasets-y-pandas" class="slide level2">
 <h2>Operaciones básicas con datasets y Pandas</h2>
 <p>Post-revisión, necesitaremos usar algunos metodos básicos de Pandas para poder explorar los datos con mayor detalle.</p>
 <p>Principalmente, esto involucra el uso de <strong>máscaras</strong>:</p>
-<div id="90456337" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="co"># Seleccionar columnas específicas (por ejemplo, variables de la zona Sureste)</span></span>
-<span id="cb14-2"><a href=""></a>subset <span class="op">=</span> df_imeca[[col <span class="cf">for</span> col <span class="kw">in</span> df_imeca.columns <span class="cf">if</span> <span class="st">"Sureste"</span> <span class="kw">in</span> col]]</span>
-<span id="cb14-3"><a href=""></a>subset.head(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div id="211ac922" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="co"># Seleccionar columnas específicas (por ejemplo, variables de la zona Sureste)</span></span>
+<span id="cb10-2"><a href=""></a>subset <span class="op">=</span> df_imeca[[col <span class="cf">for</span> col <span class="kw">in</span> df_imeca.columns <span class="cf">if</span> <span class="st">"Sureste"</span> <span class="kw">in</span> col]]</span>
+<span id="cb10-3"><a href=""></a>subset.head(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="38">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -1317,13 +1163,13 @@ Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
 </section>
 <section class="slide level2">
 
-<div id="4d0da655" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="im">import</span> datetime</span>
-<span id="cb15-2"><a href=""></a></span>
-<span id="cb15-3"><a href=""></a><span class="co"># Filtrar los datos por una fecha específica</span></span>
-<span id="cb15-4"><a href=""></a>filtered_data <span class="op">=</span> df_imeca[df_imeca[<span class="st">'Fecha-Hora'</span>] <span class="op">&lt;</span> np.datetime64(<span class="st">"1997-01-01"</span>)]</span>
-<span id="cb15-5"><a href=""></a>filtered_data.head(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div id="5dd27aad" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href=""></a><span class="im">import</span> datetime</span>
+<span id="cb11-2"><a href=""></a></span>
+<span id="cb11-3"><a href=""></a><span class="co"># Filtrar los datos por una fecha específica</span></span>
+<span id="cb11-4"><a href=""></a>filtered_data <span class="op">=</span> df_imeca[df_imeca[<span class="st">'Fecha-Hora'</span>] <span class="op">&lt;</span> np.datetime64(<span class="st">"1997-01-01"</span>)]</span>
+<span id="cb11-5"><a href=""></a>filtered_data.head(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="39">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -1450,19 +1296,19 @@ Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
 <section id="agrupación-de-datos" class="slide level2 smaller">
 <h2>Agrupación de datos</h2>
 <p>Nos podemos auxiliar también de un proceso de agrupación o agregación mediante Pandas. Esto permitirá resumir estádisticas, lo cual suele ser útil para verlos según periodos de tiempo o categorías:</p>
-<div id="3593584a" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="co"># Agrupar por mes y año</span></span>
-<span id="cb16-2"><a href=""></a>grouped_df <span class="op">=</span> df_imeca.groupby(df_imeca[<span class="st">'Fecha-Hora'</span>].dt.to_period(<span class="st">'M'</span>)).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="ec0f9351" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="co"># Agrupar por mes y año</span></span>
+<span id="cb12-2"><a href=""></a>grouped_df <span class="op">=</span> df_imeca.groupby(df_imeca[<span class="st">'Fecha-Hora'</span>].dt.to_period(<span class="st">'M'</span>)).mean()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="873f0b4e" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href=""></a>grouped_df.drop(<span class="st">"Fecha-Hora"</span>,axis<span class="op">=</span><span class="dv">1</span>,inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-2"><a href=""></a>sureste_columns <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> grouped_df.columns <span class="cf">if</span> <span class="st">"Sureste"</span> <span class="kw">in</span> i]</span>
-<span id="cb17-3"><a href=""></a>grouped_df <span class="op">=</span> grouped_df.reset_index().set_index(<span class="st">"Fecha-Hora"</span>)</span>
-<span id="cb17-4"><a href=""></a>grouped_df[sureste_columns][grouped_df.index <span class="op">&lt;</span> <span class="st">"2000-01-01"</span>].plot()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="36be8244" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a>grouped_df.drop(<span class="st">"Fecha-Hora"</span>,axis<span class="op">=</span><span class="dv">1</span>,inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-2"><a href=""></a>sureste_columns <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> grouped_df.columns <span class="cf">if</span> <span class="st">"Sureste"</span> <span class="kw">in</span> i]</span>
+<span id="cb13-3"><a href=""></a>grouped_df <span class="op">=</span> grouped_df.reset_index().set_index(<span class="st">"Fecha-Hora"</span>)</span>
+<span id="cb13-4"><a href=""></a>grouped_df[sureste_columns][grouped_df.index <span class="op">&lt;</span> <span class="st">"2000-01-01"</span>].plot()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-16-output-1.png" width="798" height="444"></p>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-13-output-1.png" width="798" height="444"></p>
 </figure>
 </div>
 </div>
@@ -1471,8 +1317,8 @@ Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
 <section id="ordenamiento-de-datos" class="slide level2">
 <h2>Ordenamiento de datos</h2>
 <p>También podemos ordenar los datos en orden ascendiente o descendientes según uno o varios campos en Pandas, de la siguiente manera:</p>
-<div id="d5a67875" class="cell" data-execution_count="16">
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div id="52225a22" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="42">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -1784,6 +1630,951 @@ Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
 </table>
 
 <p>227016 rows × 31 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="guardado-de-resultados" class="slide level2">
+<h2>Guardado de resultados</h2>
+<p>Después del preprocesamiento, deberíamos guardar el dataframe (separado de los datos en bruto, por supuesto).</p>
+<p>Aunque se puede guardar en .csv o .xlsx, lo más común es guardarlo en formato .parquet, que acelerará bastante su carga en Pandas a futuro:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a>df_imeca.to_parquet(<span class="st">"data/imeca1996_2022.parquet"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Dependiendo del formato de los valores, es posible que no puedan ser contenidos en un parquet. Aquí resulta útil convertir a un archivo pickle:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a>df_imeca.to_pickle(<span class="st">"data/imeca1996_2022.pkl"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="análisis-descriptivo" class="slide level2">
+<h2>Análisis descriptivo</h2>
+<p>Con el método <code>describe()</code>, podemos calcular estadísticas descriptivas básicas: esto incluye la media, la mediana, el minimo, el maximo, y la desviación estándar.</p>
+<div id="4108b3c4" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a>df_imeca.describe()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Noroeste Ozono</th>
+<th data-quarto-table-cell-role="th">Noroeste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Noroeste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Noroeste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Noroeste PM10</th>
+<th data-quarto-table-cell-role="th">Noreste Ozono</th>
+<th data-quarto-table-cell-role="th">Noreste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Noreste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Noreste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Noreste PM10</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Sureste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Sureste PM10</th>
+<th data-quarto-table-cell-role="th">Noroeste PM25</th>
+<th data-quarto-table-cell-role="th">Noreste PM25</th>
+<th data-quarto-table-cell-role="th">Centro PM25</th>
+<th data-quarto-table-cell-role="th">Suroeste PM25</th>
+<th data-quarto-table-cell-role="th">Sureste PM25</th>
+<th data-quarto-table-cell-role="th">Fecha-Hora</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>225437.000000</td>
+<td>227012.000000</td>
+<td>225447.000000</td>
+<td>224406.000000</td>
+<td>226829.000000</td>
+<td>225517.000000</td>
+<td>227013.000000</td>
+<td>225420.000000</td>
+<td>224419.000000</td>
+<td>226441.000000</td>
+<td>...</td>
+<td>226877.000000</td>
+<td>225232.000000</td>
+<td>224270.000000</td>
+<td>222686.000000</td>
+<td>31400.000000</td>
+<td>33322.000000</td>
+<td>33360.000000</td>
+<td>33381.000000</td>
+<td>33518.000000</td>
+<td>227016</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>32.441871</td>
+<td>12.883068</td>
+<td>18.045576</td>
+<td>15.021425</td>
+<td>55.473674</td>
+<td>32.770137</td>
+<td>10.978177</td>
+<td>16.079310</td>
+<td>14.584906</td>
+<td>69.503712</td>
+<td>...</td>
+<td>7.476232</td>
+<td>17.614726</td>
+<td>15.283154</td>
+<td>53.652098</td>
+<td>66.227452</td>
+<td>66.560170</td>
+<td>65.294424</td>
+<td>59.282346</td>
+<td>67.066770</td>
+<td>2009-11-16 06:54:52.293054208</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>...</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>17.000000</td>
+<td>11.000000</td>
+<td>11.000000</td>
+<td>12.000000</td>
+<td>11.000000</td>
+<td>1996-01-01 07:00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>11.000000</td>
+<td>5.000000</td>
+<td>12.000000</td>
+<td>6.000000</td>
+<td>39.000000</td>
+<td>12.000000</td>
+<td>4.000000</td>
+<td>10.000000</td>
+<td>6.000000</td>
+<td>51.000000</td>
+<td>...</td>
+<td>2.000000</td>
+<td>11.000000</td>
+<td>6.000000</td>
+<td>37.000000</td>
+<td>58.000000</td>
+<td>57.000000</td>
+<td>57.000000</td>
+<td>52.000000</td>
+<td>57.000000</td>
+<td>2003-05-30 18:45:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>22.000000</td>
+<td>9.000000</td>
+<td>16.000000</td>
+<td>11.000000</td>
+<td>53.000000</td>
+<td>25.000000</td>
+<td>7.000000</td>
+<td>15.000000</td>
+<td>11.000000</td>
+<td>67.000000</td>
+<td>...</td>
+<td>5.000000</td>
+<td>16.000000</td>
+<td>12.000000</td>
+<td>52.000000</td>
+<td>66.000000</td>
+<td>66.000000</td>
+<td>65.000000</td>
+<td>59.000000</td>
+<td>67.000000</td>
+<td>2009-11-19 12:30:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>43.000000</td>
+<td>17.000000</td>
+<td>21.000000</td>
+<td>20.000000</td>
+<td>68.000000</td>
+<td>46.000000</td>
+<td>15.000000</td>
+<td>20.000000</td>
+<td>19.000000</td>
+<td>87.000000</td>
+<td>...</td>
+<td>10.000000</td>
+<td>22.000000</td>
+<td>21.000000</td>
+<td>66.000000</td>
+<td>74.000000</td>
+<td>77.000000</td>
+<td>75.000000</td>
+<td>67.000000</td>
+<td>78.000000</td>
+<td>2016-05-11 06:15:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">max</td>
+<td>270.000000</td>
+<td>177.000000</td>
+<td>157.000000</td>
+<td>155.000000</td>
+<td>173.000000</td>
+<td>245.000000</td>
+<td>122.000000</td>
+<td>141.000000</td>
+<td>139.000000</td>
+<td>230.000000</td>
+<td>...</td>
+<td>88.000000</td>
+<td>132.000000</td>
+<td>127.000000</td>
+<td>385.000000</td>
+<td>139.000000</td>
+<td>185.000000</td>
+<td>144.000000</td>
+<td>144.000000</td>
+<td>162.000000</td>
+<td>2023-01-01 00:00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">std</td>
+<td>31.466488</td>
+<td>12.066079</td>
+<td>10.046197</td>
+<td>11.991024</td>
+<td>22.293526</td>
+<td>27.389210</td>
+<td>10.590443</td>
+<td>8.342091</td>
+<td>11.314370</td>
+<td>25.838547</td>
+<td>...</td>
+<td>6.926579</td>
+<td>9.929342</td>
+<td>11.831280</td>
+<td>22.368569</td>
+<td>12.999609</td>
+<td>17.519201</td>
+<td>15.387864</td>
+<td>14.905997</td>
+<td>18.266771</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+<p>8 rows × 31 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Podemos usar las máscaras anteriormente descritas si queremos ver estas estadísticas solo para determinadas columnas o periodos de tiempo.</p>
+<div id="0bbc3757" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href=""></a>df_imeca[sureste_columns][df_imeca[<span class="st">'Fecha-Hora'</span>] <span class="op">&gt;</span> <span class="st">"2010-01-01"</span>].describe()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Sureste Ozono</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Sureste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Sureste PM10</th>
+<th data-quarto-table-cell-role="th">Sureste PM25</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>110875.000000</td>
+<td>112356.000000</td>
+<td>110720.000000</td>
+<td>109750.000000</td>
+<td>109166.000000</td>
+<td>33518.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>32.200866</td>
+<td>4.126064</td>
+<td>13.967576</td>
+<td>7.529303</td>
+<td>55.750627</td>
+<td>67.066770</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>27.495795</td>
+<td>3.922531</td>
+<td>6.949791</td>
+<td>4.499194</td>
+<td>25.245232</td>
+<td>18.266771</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>4.000000</td>
+<td>11.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>12.000000</td>
+<td>2.000000</td>
+<td>9.000000</td>
+<td>5.000000</td>
+<td>36.000000</td>
+<td>57.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>24.000000</td>
+<td>3.000000</td>
+<td>13.000000</td>
+<td>6.000000</td>
+<td>51.000000</td>
+<td>67.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>44.000000</td>
+<td>5.000000</td>
+<td>18.000000</td>
+<td>9.000000</td>
+<td>73.000000</td>
+<td>78.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>167.000000</td>
+<td>60.000000</td>
+<td>70.000000</td>
+<td>42.000000</td>
+<td>132.000000</td>
+<td>162.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="histogramas-mediante-matplotlib" class="slide level2">
+<h2>Histogramas mediante Matplotlib</h2>
+<p>Un <strong>histograma</strong> representa de manera gráfica, con barras, la cantidad de veces que se repite un valor a lo largo del conjunto de datos.</p>
+<div id="04c3ddb5" class="cell" data-execution_count="16">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-17-output-1.png" width="964" height="459"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="distribución-de-frecuencias" class="slide level2">
+<h2>Distribución de frecuencias</h2>
+<p>Sí queremos calcular la frecuencia de rangos de valores (o intervalos), podemos usar los metodos <code>value_counts</code> o <code>cut</code> antes de graficar..</p>
+<div id="1398f8eb" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href=""></a>df_imeca[<span class="st">'Noroeste Ozono'</span>].value_counts(bins<span class="op">=</span><span class="dv">10</span>).plot()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-18-output-1.png" width="823" height="412"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="clasificación-de-datos-numéricos" class="slide level2">
+<h2>Clasificación de datos numéricos</h2>
+<p>Dependiendo del tipo de análisis o herramientas que se deseen utilizar para este, puede ser necesaria la creación de categorias dentro del conjunto de datos.</p>
+<div id="c0f083d8" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href=""></a><span class="co"># Aplicar una función que clasifique la calidad del aire en 'Buena', 'Mala', 'Peligrosa'</span></span>
+<span id="cb19-2"><a href=""></a><span class="co"># Estas clasificaciones vienen de la Agencia de Protección Ambiental de Estados Unidos, y son distintas para cada campo.</span></span>
+<span id="cb19-3"><a href=""></a><span class="kw">def</span> clasificar_calidad(pm10):</span>
+<span id="cb19-4"><a href=""></a>    <span class="cf">if</span> pm10 <span class="op">&lt;</span> <span class="dv">50</span>:</span>
+<span id="cb19-5"><a href=""></a>        <span class="cf">return</span> <span class="st">'Buena'</span></span>
+<span id="cb19-6"><a href=""></a>    <span class="cf">elif</span> <span class="dv">50</span> <span class="op">&lt;=</span> pm10 <span class="op">&lt;</span> <span class="dv">100</span>:</span>
+<span id="cb19-7"><a href=""></a>        <span class="cf">return</span> <span class="st">'Mala'</span></span>
+<span id="cb19-8"><a href=""></a>    <span class="cf">else</span>:</span>
+<span id="cb19-9"><a href=""></a>        <span class="cf">return</span> <span class="st">'Peligrosa'</span></span>
+<span id="cb19-10"><a href=""></a></span>
+<span id="cb19-11"><a href=""></a>sureste_pm10_clasificado <span class="op">=</span> df_imeca[<span class="st">'Sureste PM10'</span>].<span class="bu">apply</span>(clasificar_calidad)</span>
+<span id="cb19-12"><a href=""></a>sureste_pm10_clasificado</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="47">
+<pre><code>0         Buena
+1         Buena
+2         Buena
+3         Buena
+4         Buena
+          ...  
+227011    Buena
+227012    Buena
+227013    Buena
+227014    Buena
+227015    Buena
+Name: Sureste PM10, Length: 227016, dtype: object</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div id="f670c6f6" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href=""></a>sureste_pm10_clasificado.value_counts().plot(kind<span class="op">=</span><span class="st">'bar'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-20-output-1.png" width="823" height="476"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="codificación-de-variables-categóricas" class="slide level2">
+<h2>Codificación de variables categóricas:</h2>
+<p>Para algunas tareas de predicción, es necesario transformar variables categóricas a númericas. Una tecnica común es la codificación one-hot, que convierte estás a una mascara de bits:</p>
+<div id="fddf6ce6" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href=""></a><span class="co"># Convertir las variables categóricas a variables dummy (one-hot encoding)</span></span>
+<span id="cb22-2"><a href=""></a>df_ohotest <span class="op">=</span> pd.DataFrame.copy(df_imeca)</span>
+<span id="cb22-3"><a href=""></a>df_ohotest[<span class="st">'Noreste PM10'</span>] <span class="op">=</span> df_ohotest[<span class="st">'Noreste PM10'</span>].<span class="bu">apply</span>(clasificar_calidad)</span>
+<span id="cb22-4"><a href=""></a>df_with_dummies <span class="op">=</span> pd.get_dummies(df_ohotest, columns<span class="op">=</span>[<span class="st">'Noreste PM10'</span>])</span>
+<span id="cb22-5"><a href=""></a>df_with_dummies[df_with_dummies.columns[<span class="op">-</span><span class="dv">3</span>:]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="49">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Noreste PM10_Buena</th>
+<th data-quarto-table-cell-role="th">Noreste PM10_Mala</th>
+<th data-quarto-table-cell-role="th">Noreste PM10_Peligrosa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">227011</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">227012</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">227013</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">227014</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">227015</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+
+<p>227016 rows × 3 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="generar-matrices-de-correlación" class="slide level2">
+<h2>Generar matrices de correlación</h2>
+<p>Una matriz de correlación mide la dependencia lineal entre cada par de variables en un conjunto de datos.</p>
+<p>Es una herramienta visual importante para identificar relaciones lineales fuertes (positivas o negativas) entre variables.</p>
+<p>Esta medida de correlación se lee de la siguiente manera:</p>
+<ul>
+<li><p>Si es cercano a 1, indica que cuando una de las variables sube, la otra también.</p></li>
+<li><p>Si es cercano a -1, indica que una variable baja cuando la otra sube.</p></li>
+<li><p>Si es cercano a 0, indica que no hay correlación entre las variables.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div id="1093a1f5" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href=""></a><span class="co"># Calcular la matriz de correlación para las variables numéricas en el dataframe</span></span>
+<span id="cb23-2"><a href=""></a>correlacion <span class="op">=</span> df_imeca[</span>
+<span id="cb23-3"><a href=""></a>    [<span class="st">"Noroeste Ozono"</span>, <span class="st">"Noroeste PM10"</span>, <span class="st">"Centro Ozono"</span>, <span class="st">"Centro PM10"</span>, <span class="st">"Sureste PM25"</span>]</span>
+<span id="cb23-4"><a href=""></a>].corr()</span>
+<span id="cb23-5"><a href=""></a></span>
+<span id="cb23-6"><a href=""></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb23-7"><a href=""></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb23-8"><a href=""></a></span>
+<span id="cb23-9"><a href=""></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">3</span>))</span>
+<span id="cb23-10"><a href=""></a>sns.heatmap(correlacion, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">"coolwarm"</span>, linewidths<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb23-11"><a href=""></a>plt.title(</span>
+<span id="cb23-12"><a href=""></a>    <span class="st">"Matriz de Correlación entre Contaminantes en Diferentes Regiones"</span>, fontsize<span class="op">=</span><span class="dv">16</span></span>
+<span id="cb23-13"><a href=""></a>)</span>
+<span id="cb23-14"><a href=""></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-22-output-1.png" width="1062" height="289"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="generar-coeficientes-de-correlación" class="slide level2">
+<h2>Generar coeficientes de correlación</h2>
+<ul>
+<li>El coeficiente de <strong>Pearson</strong> mide la relación lineal entre dos variables continuas. Asume que los datos son normalmente distribuidos.</li>
+</ul>
+<div id="d27c7cf5" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href=""></a>pearson_corr <span class="op">=</span> df_imeca[<span class="st">"Noroeste Ozono"</span>].corr(</span>
+<span id="cb24-2"><a href=""></a>    df_imeca[<span class="st">"Noroeste PM10"</span>], method<span class="op">=</span><span class="st">"pearson"</span></span>
+<span id="cb24-3"><a href=""></a>)</span>
+<span id="cb24-4"><a href=""></a><span class="bu">print</span>(<span class="ss">f"Correlación de Pearson entre Noroeste Ozono y Noroeste PM10: </span><span class="sc">{</span>pearson_corr<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Correlación de Pearson entre Noroeste Ozono y Noroeste PM10: 0.10637508114380317</code></pre>
+</div>
+</div>
+<p>Esta correlación se lee igual que en el ultimo ejemplo. Por lo tanto, aquí podemos ver que no hay correlación entre estás dos variables.</p>
+</section>
+<section class="slide level2">
+
+<div id="165d2852" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href=""></a>pearson_corr <span class="op">=</span> df_imeca[<span class="st">"Noroeste PM10"</span>].corr(</span>
+<span id="cb26-2"><a href=""></a>    df_imeca[<span class="st">"Noroeste PM25"</span>], method<span class="op">=</span><span class="st">"pearson"</span></span>
+<span id="cb26-3"><a href=""></a>)</span>
+<span id="cb26-4"><a href=""></a><span class="bu">print</span>(<span class="ss">f"Correlación de Pearson entre Noroeste PM10 y Noroeste PM25: </span><span class="sc">{</span>pearson_corr<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Correlación de Pearson entre Noroeste PM10 y Noroeste PM25: 0.7239571214878847</code></pre>
+</div>
+</div>
+<p>PM10 y PM25 son dos variables que miden esencialmente dos tamaños de lo mismo (particulas, de diametro de 1.0 µm y 2.5 µm, respectivamente), así que es esperable que tengan una correlación positiva.</p>
+<aside class="notes">
+<ul>
+<li>El coeficiente de <strong>Spearman</strong> mide de manera no paramétrica la correlación, usando el rango de los valores en lugar de los valores directamente. Por lo tanto, no importa que su distribución.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="relación-entre-variables-continuas-y-categóricas" class="slide level2">
+<h2>Relación entre variables continuas y categóricas</h2>
+<p>Ya que estamos trabajando con un conjunto de variables continuas, primero debemos crear una variable categórica (niveles de ozono). Luego, graficaremos un boxplot para ver la distribución de otra variable continua según estas categorías.</p>
+<div id="e73ec88b" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href=""></a>df_imeca[<span class="st">'Niveles_Ozono'</span>] <span class="op">=</span> pd.cut(</span>
+<span id="cb28-2"><a href=""></a>    df_imeca[<span class="st">'Noroeste Ozono'</span>], </span>
+<span id="cb28-3"><a href=""></a>    bins<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">150</span>, np.inf], </span>
+<span id="cb28-4"><a href=""></a>    labels<span class="op">=</span>[<span class="st">'Bajo'</span>, <span class="st">'Moderado'</span>, <span class="st">'Alto'</span>, <span class="st">'Muy Alto'</span>]</span>
+<span id="cb28-5"><a href=""></a>)</span>
+<span id="cb28-6"><a href=""></a></span>
+<span id="cb28-7"><a href=""></a><span class="co"># Mostrar la distribución de la nueva variable categórica</span></span>
+<span id="cb28-8"><a href=""></a><span class="bu">print</span>(df_imeca[<span class="st">'Niveles_Ozono'</span>].value_counts())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Niveles_Ozono
+Bajo        180104
+Moderado     33777
+Alto          9863
+Muy Alto      1667
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div id="239c83ff" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href=""></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">4</span>))</span>
+<span id="cb30-2"><a href=""></a>sns.boxplot(x<span class="op">=</span><span class="st">"Niveles_Ozono"</span>, y<span class="op">=</span><span class="st">"Noroeste PM10"</span>, data<span class="op">=</span>df_imeca)</span>
+<span id="cb30-3"><a href=""></a>plt.title(</span>
+<span id="cb30-4"><a href=""></a>    <span class="st">"Concentración de PM10 según los Niveles de Ozono en la Región Noroeste"</span>,</span>
+<span id="cb30-5"><a href=""></a>    fontsize<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb30-6"><a href=""></a>)</span>
+<span id="cb30-7"><a href=""></a>plt.xlabel(<span class="st">"Niveles de Ozono"</span>)</span>
+<span id="cb30-8"><a href=""></a>plt.ylabel(<span class="st">"Concentración de PM10"</span>)</span>
+<span id="cb30-9"><a href=""></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-26-output-1.png" width="1114" height="381"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="análisis-de-tablas-de-contingencia" class="slide level2">
+<h2>Análisis de tablas de contingencia</h2>
+<p>Sí queremos observar la relación dos variables categóricas, podemos usar una tabla de contingencia, la cual nos dejará ver cuantas veces, según las filas, coinciden dos categorías determinadas.</p>
+<div id="e7edd302" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href=""></a><span class="co"># Crear categorías para los niveles de PM10 en la región Noroeste</span></span>
+<span id="cb31-2"><a href=""></a>df_imeca[<span class="st">"Niveles_PM10"</span>] <span class="op">=</span> pd.cut(</span>
+<span id="cb31-3"><a href=""></a>    df_imeca[<span class="st">"Noroeste PM10"</span>],</span>
+<span id="cb31-4"><a href=""></a>    bins<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>],</span>
+<span id="cb31-5"><a href=""></a>    labels<span class="op">=</span>[<span class="st">"Bajo"</span>, <span class="st">"Moderado"</span>, <span class="st">"Alto"</span>, <span class="st">"Muy Alto"</span>],</span>
+<span id="cb31-6"><a href=""></a>)</span>
+<span id="cb31-7"><a href=""></a></span>
+<span id="cb31-8"><a href=""></a>tabla_contingencia <span class="op">=</span> pd.crosstab(df_imeca[<span class="st">"Niveles_Ozono"</span>], df_imeca[<span class="st">"Niveles_PM10"</span>])</span>
+<span id="cb31-9"><a href=""></a><span class="bu">print</span>(tabla_contingencia)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Niveles_PM10    Bajo  Moderado  Alto  Muy Alto
+Niveles_Ozono                                 
+Bajo           85447     84643  9829         9
+Moderado       13666     18572  1527         2
+Alto            2287      6607   963         6
+Muy Alto         256      1303   108         0</code></pre>
+</div>
+</div>
+</section>
+<section id="análisis-temporal" class="slide level2">
+<h2>Análisis temporal</h2>
+<p>Sí quisieramos, por ejemplo, ver si disminuye o incrementa la contaminación en el aire a lo largo del tiempo, podríamos ordenar los datos según la columna de fecha-hora y/o agruparlos según més, semana, etc.</p>
+</section>
+<section id="agrupación-según-meses-o-años" class="slide level2 smaller">
+<h2>Agrupación según meses o años</h2>
+<p>Al agrupar los datos, se necesita sacar la media de los contaminantes para cada periodo de agrupación (meses o años) para posteriormente observar que tendencias existen.</p>
+<div id="1f134778" class="cell" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="56">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Noroeste Ozono</th>
+<th data-quarto-table-cell-role="th">Noroeste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Noroeste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Noroeste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Noroeste PM10</th>
+<th data-quarto-table-cell-role="th">Noreste Ozono</th>
+<th data-quarto-table-cell-role="th">Noreste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Noreste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Noreste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Noreste PM10</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Sureste Ozono</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de azufre</th>
+<th data-quarto-table-cell-role="th">Sureste dióxido de nitrógeno</th>
+<th data-quarto-table-cell-role="th">Sureste monóxido de carbono</th>
+<th data-quarto-table-cell-role="th">Sureste PM10</th>
+<th data-quarto-table-cell-role="th">Noroeste PM25</th>
+<th data-quarto-table-cell-role="th">Noreste PM25</th>
+<th data-quarto-table-cell-role="th">Centro PM25</th>
+<th data-quarto-table-cell-role="th">Suroeste PM25</th>
+<th data-quarto-table-cell-role="th">Sureste PM25</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Fecha-Hora</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1996-01-31</td>
+<td>73.324731</td>
+<td>21.131183</td>
+<td>40.139785</td>
+<td>58.952688</td>
+<td>64.167742</td>
+<td>51.972043</td>
+<td>27.154839</td>
+<td>26.868817</td>
+<td>46.030108</td>
+<td>122.393548</td>
+<td>...</td>
+<td>74.752688</td>
+<td>28.873118</td>
+<td>41.481720</td>
+<td>45.916129</td>
+<td>59.367742</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1996-02-29</td>
+<td>64.468966</td>
+<td>16.760920</td>
+<td>32.997701</td>
+<td>47.554023</td>
+<td>73.905747</td>
+<td>51.422989</td>
+<td>22.556322</td>
+<td>25.696552</td>
+<td>42.542529</td>
+<td>110.960920</td>
+<td>...</td>
+<td>72.278161</td>
+<td>18.347126</td>
+<td>33.163218</td>
+<td>40.740230</td>
+<td>67.029885</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1996-03-31</td>
+<td>62.810753</td>
+<td>18.843011</td>
+<td>26.810753</td>
+<td>42.621505</td>
+<td>92.105376</td>
+<td>50.625806</td>
+<td>22.365591</td>
+<td>25.501075</td>
+<td>34.234409</td>
+<td>96.744086</td>
+<td>...</td>
+<td>59.711828</td>
+<td>13.569892</td>
+<td>24.025806</td>
+<td>30.726882</td>
+<td>84.847312</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1996-04-30</td>
+<td>61.224444</td>
+<td>16.806667</td>
+<td>22.135556</td>
+<td>38.886667</td>
+<td>95.151111</td>
+<td>50.624444</td>
+<td>18.713333</td>
+<td>16.931111</td>
+<td>34.973333</td>
+<td>94.717778</td>
+<td>...</td>
+<td>60.040000</td>
+<td>17.015556</td>
+<td>23.888889</td>
+<td>30.308889</td>
+<td>69.395556</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1996-05-31</td>
+<td>62.578495</td>
+<td>17.961290</td>
+<td>20.240860</td>
+<td>34.156989</td>
+<td>91.339785</td>
+<td>51.298925</td>
+<td>17.496774</td>
+<td>17.608602</td>
+<td>37.584946</td>
+<td>98.709677</td>
+<td>...</td>
+<td>60.412903</td>
+<td>14.627957</td>
+<td>24.501075</td>
+<td>30.621505</td>
+<td>58.580645</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 30 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="evolución-temporal-de-los-contaminantes" class="slide level2">
+<h2>Evolución temporal de los contaminantes</h2>
+<p>Sí utilizamos el dataframe generado anteriormente en una gráfica de linea, veriamos una representación de la evolución temporal de los contaminantes,</p>
+<p>Por ejemplo, para el Ozono en la región Noroeste:</p>
+<div id="e3128c87" class="cell" data-execution_count="28">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-29-output-1.png" width="1107" height="455"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Podemos también generar una línea de tendencia, mediante una regresión lineal simple. De esa manera se verá de forma más clara si la tendencia es de disminución o aumento.</p>
+<div id="ec3cee7c" class="cell" data-execution_count="29">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-30-output-1.png" width="1107" height="455"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pendiente de la tendencia: -0.0789</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-periodos-de-tiempo" class="slide level2">
+<h2>Comparación de periodos de tiempo</h2>
+<p>Si estás interesado en comparar periodos específicos (por ejemplo, años antes y después de una intervención), puedes agrupar los datos por años y calcular el promedio de los contaminantes en esos periodos:</p>
+<div id="e614e00f" class="cell" data-execution_count="30">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="analisis-exploratorio-datos_files/figure-revealjs/cell-31-output-1.png" width="1105" height="455"></p>
+</figure>
 </div>
 </div>
 </div>
