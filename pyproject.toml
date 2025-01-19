@@ -1,0 +1,16 @@
+[project]
+name = "exploracion-datos"
+version = "0.1.0"
+description = "Contenido de formación en análisis de exploración de datos"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "jupyterlab>=4.3.4",
+    "matplotlib>=3.10.0",
+    "numpy>=2.2.2",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
+    "tqdm>=4.67.1",
+    "xlrd>=2.0.1",
+]
