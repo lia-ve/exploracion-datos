@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+init/
+*_files
+*.quarto_ipynb
+
 # C extensions
 *.so
 
