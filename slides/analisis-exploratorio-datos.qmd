@@ -25,17 +25,11 @@ Verás como se realiza cada paso de este proceso, desde su **carga** y **prepara
 
 ## Objetivos
 
-1. Cargar y hacer una revisión de los datos
+1. Hacer visualizaciones y análisis de los datos para ver relaciones, distribuciones y tendencias
 
-2. Limpiar, imputar o normalizar datos
+2. Detectar posibles patrones y correlaciones
 
-3. Hacer visualizaciones y análisis generales de los datos
-
-4. Emplear gráficos más especificos para ver relaciones, distribuciones y tendencias
-
-5. Detección de patrones y correlaciones
-
-6. Interpretación y generación de hipótesis
+3. Interpretar hallazgos y generar hipótesis
 
 ## Análisis exploratorio de datos
 
@@ -49,159 +43,119 @@ Así se puede decidir de manera informada:
 
 - Que **técnicas estadísticas o modelos** se deberían utilizar con estos datos?
 
-## Ejemplo de carga
+## Descripciones generales del conjunto de datos {.scrollable}
 
-``` python 
-# Este conjunto de datos se puede descargar
-# directamente desde Python.
-from urllib.request import urlretrieve
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
-
-# Se descargan todos los archivos excel para los años 1996-2023.
-for year in tqdm(range(1996, 2023)):
-    url = f"http://www.aire.cdmx.gob.mx/descargas/basesimeca/imeca{year}.xls"
-    filename = f"data/{Path(url).name}"
-    urlretrieve(url, filename)
-
-# Se crea una lista de dataframes a partir de los archivos descargados.
-dfs = []
-for year in tqdm(range(1996, 2023)):
-    df = pd.read_excel(f"data/imeca{year}.xls")
-    dfs.append(df)
-```
-
-## Vista preliminar del dataframe {.smaller}
+Usaremos el conjunto de datos después de que este ha sido sometido a un proceso de revisión y limpieza.
 
 ```{python}
-import numpy as np
+#| echo: true
 import pandas as pd
-from tqdm import tqdm
+import numpy as np
+df_imeca = pd.read_parquet('data/imeca1996_2022.parquet')
+```
 
-dfs = []
-for year in tqdm(range(1996, 2023)):
-    df = pd.read_excel(f"data/imeca{year}.xls")
-    dfs.append(df)
+---
 
-df_imeca = pd.concat(dfs, ignore_index=True)
-df_imeca
+Primero, deberíamos hacernos una idea general de que existe dentro del conjunto. Por ejemplo, viendo cuales son sus **dimensiones**, cuales son las **características** o variables que existen en el, y/o cuales son los tipos de datos de estás variables.
+
+```{python}
+#| echo: true
+# El metodo .shape nos mostrará cuales son las dimensiones del conjunto.
+# El primer numero da la cantidad de filas, y el segundo número da la cantidad de columnas.
+df_imeca.shape
 ```
 
 ---
 
 ```{python}
+#| echo: true
+# Con .head, podemos hacer una vista preliminar al conjunto.
+# En este caso, nos mostrará las primeras 5 filas.
+df_imeca.head(5)
+```
+
+---
+
+Para estar seguros de la cantidad de campos, los nombres de los campos, y los tipo de datos de los campos, podemos usar el metodo `.info`:
+
+```{python}
+#| echo: true
 df_imeca.info()
 ```
 
-Hay varios problemas: 
+---
 
-- Cantidad relativamente grande de valores nulos para algunas columnas
-
-- Los nombres de las columnas no han sido capitalizados uniformemente.
-
-- Los valores nulos acá están marcados con $-99$.
-
-## Combinación de columnas similares
-
-- Capitalizaciones no-uniformes
+¿Cual es el porcentaje de valores nulos dentro del dataset? Podemos realizar una operación sencilla con numpy para averiguarlo:
 
 ```{python}
 #| echo: true
-df_imeca.Fecha = df_imeca.Fecha.combine_first(df_imeca.FECHA)
-
-zonas = ["Noroeste", "Noreste", "Centro", "Suroeste", "Sureste"]
-for zona in zonas:
-    df_imeca[f"{zona} Ozono"] = df_imeca[f"{zona} Ozono"].combine_first(
-        df_imeca[f"{zona} ozono"]
-    )
-
-df_imeca = df_imeca.drop(columns=["FECHA"] + [f"{zona} ozono" for zona in zonas])
+np.round(df_imeca.isnull().mean() * 100,1)
 ```
 
-- Unidades de fecha-hora
+---
+
+Después, sería buena idea evaluar de manera general el contenido de los datos.
+
+Panda nos ofrece un método llamado `.describe` que automaticamente calcula e muestra medidas básicas de los campos del conjunto.
+
+Esto es una forma útil de ver de manera inmediata los valores minimos y máximos de cada campo, además de su valor medio, la desviación estándar y la cantidad de filas que contiene.
+
+---
 
 ```{python}
 #| echo: true
-## Específicamos que la unidad es en horas al momento de realizar la conversión
-df_imeca.Hora = pd.to_timedelta(df_imeca.Hora, unit='h')
-
-df_imeca["Fecha-Hora"] = df_imeca.Fecha + df_imeca.Hora
-## Esto sumará el valor de Fecha con el valor de Hora para cada índice.
-df_imeca = df_imeca.drop(columns=["Fecha", "Hora"])
-## Borramos columnas innecesarias de nuevo.
+df_imeca.select_dtypes(include='number').describe()
 ```
 
-## Dataframe post-procesamiento {.smaller}
+---
 
-```{python}
-df_imeca
-```
+Las anteriores medidas no podrán ser generadas para variables categóricas. 
 
-## Detección de valores faltantes
-
-- Marca de valores nulos:
+Sí queremos saber que categorias se presentan con más frecuencia, podemos usar el metodo `.value_counts`:
 
 ```{python}
 #| echo: true
-df_imeca = df_imeca.replace(-99, np.nan)
+# Lo usaremos junto al metodo .apply para poder ver la cantidad de valores a lo largo de varias columnas.
+df_imeca.select_dtypes(include='object').apply(pd.Series.value_counts)
 ```
 
-- Numero de valores nulos por columna:
+---
 
-```{python}
-df_imeca.isnull().sum()
-```
-
-## Transformaciones iniciales
-
-Es posible que el conjunto de datos tenga variables que estén en diferentes escalas. Por ejemplo. que los contaminantes aquí tengan diferentes rangos de magnitud.
-
-En estos casos, podemos aplicar una **normalización**, facilitada por la libreria scikit-learn.
-
-Si se dejan los datos sin cambiar, podríamos ver tendencias erroneas en el análisis.
-
-## Normalización
+Utilizando el argumento `normalize=True`, podemos ver estas categorias en función del porcentaje de filas que ocupan:
 
 ```{python}
 #| echo: true
-# MinMaxScaler realiza una transformación lineal para todo el conjunto de datos,
-# por defecto resultando en que todos se transformen en valores desde el 0 al 1.
-from sklearn.preprocessing import MinMaxScaler
-contaminantes = [
-    'Noroeste Ozono',
-    'Noroeste dióxido de azufre',
-    'Noroeste dióxido de nitrógeno',
-    'Noroeste monóxido de carbono',
-    'Noroeste PM10'
-]
-scaler = MinMaxScaler()
-
-# Datos después de la normalización (van del 0 al 1)
-scaler.fit_transform(df_imeca[contaminantes])
+df_imeca.select_dtypes(include='object').apply(pd.Series.value_counts, normalize=True).mul(100).round(1).astype(str) + '%'
 ```
 
-## Eliminación de outliers
+---
 
-Los valores atípicos pueden hacer que extraigamos suposiciones incorrectas de los datos. Para detectarlos, podemos utilizar el método del rango intercuartílico:
+Es útil observar la distribución de los datos mediante un **histograma**, o mediante un **gráfico de densidad**:
 
 ```python
+sureste_columnas = [i for i in df_imeca.select_dtypes(include='number').columns if "Sureste" in i]
 
-lista_pm10 = [i for i in df_imeca.columns.tolist() if "PM10" in i]
+hist= df_imeca[sureste_columnas].hist(bins=30, figsize=(16,8))
+```
 
-# Método IQR para eliminar outliers
-Q1 = df_imeca[lista_pm10].quantile(0.25)
-Q3 = df_imeca[lista_pm10].quantile(0.75)
-IQR = Q3 - Q1
+```python
+kde = df_imeca[sureste_columnas].plot(kind='kde',subplots=True,layout=(3,2),figsize=(16,8))
+```
 
-# Definir los límites de detección de outliers
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
+Esto resulta util para identificar valores atípicos, saber que pruebas estadísticas usar, ver posibles errores con el proceso de ingesta y recolecta de datos, y además para poder escoger de manera informada el modelo predictivo a utilizar.
 
-# Filtrar outliers
-df_imeca[(df_imeca[lista_pm10] >= lower_bound) & (df_imeca[lista_pm10] <= upper_bound)]
+---
+
+```{python}
+sureste_columnas = [i for i in df_imeca.select_dtypes(include='number').columns if "Sureste" in i]
+
+hist= df_imeca[sureste_columnas].hist(bins=30, figsize=(16,8))
+```
+
+---
+
+```{python}
+kde = df_imeca[sureste_columnas].plot(kind='kde',subplots=True,layout=(3,2),figsize=(16,8))
 ```
 
 ## Operaciones básicas con datasets y Pandas
@@ -214,328 +168,103 @@ Principalmente, esto involucra el uso de **máscaras**:
 #| echo: true
 # Seleccionar columnas específicas (por ejemplo, variables de la zona Sureste)
 subset = df_imeca[[col for col in df_imeca.columns if "Sureste" in col]]
-subset.head(3)
+```
+
+## {.smaller}
+
+```{python}
+subset
 ```
 
 ---
 
-```{python}
+Podemos también usar varias condiciones, usando operadores de bit (& siendo igual a AND, y | siendo igual a OR).
+
+```{python} 
 #| echo: true
 import datetime
 
-# Filtrar los datos por una fecha específica
-filtered_data = df_imeca[df_imeca['Fecha-Hora'] < np.datetime64("1997-01-01")]
-filtered_data.head(3)
+# Filtrar los datos por un rango de tiempo específico
+filtered_data = df_imeca[(df_imeca['Fecha-Hora'] > np.datetime64("1998-01-01")) & (df_imeca['Fecha-Hora'] < np.datetime64("2002-01-01"))]
+filtered_data.set_index('Fecha-Hora',inplace=True)
 ```
 
-## Agrupación de datos {.smaller}
+## {.smaller}
 
-Nos podemos auxiliar también de un proceso de agrupación o agregación mediante Pandas. Esto permitirá resumir estádisticas, lo cual suele ser útil para verlos según periodos de tiempo o categorías:
+```{python} 
+filtered_data
+```
+
+---
+
+Otra operación básica de gran importancia es la **agrupación**. Esta divide el dataframe en segmentos (grupos) y luego les aplica una función para convertir estos segmentos en un solo valor.
+
+```{python} 
+#| echo: true
+# Agrupar el dataframe según los meses en las columnas de fecha y hora. 
+# La función que agrupa las filas en este caso es "mean", lo cual significa
+# que para cada més, tendremos la media de todos los valores de este més.
+df_imeca_mes = df_imeca.select_dtypes(include='number').groupby(df_imeca['Fecha-Hora'].dt.to_period('M')).mean()
+df_imeca_mes.head(3)
+```
+
+---
+
+Finalmente, la ultima operación básica que veremos es el **ordenamiento**. Simplemente se trata de ordenar el dataframe en order ascendente o descendente según una (o varias) columnas.
 
 ```{python}
 #| echo: true
-# Agrupar por mes y año
-grouped_df = df_imeca.groupby(df_imeca['Fecha-Hora'].dt.to_period('M')).mean()
-```
-
-```{python}
-#| echo: true
-grouped_df.drop("Fecha-Hora",axis=1,inplace=True)
-sureste_columns = [i for i in grouped_df.columns if "Sureste" in i]
-grouped_df = grouped_df.reset_index().set_index("Fecha-Hora")
-grouped_df[sureste_columns][grouped_df.index < "2000-01-01"].plot()
-```
-
-## Ordenamiento de datos
-
-También podemos ordenar los datos en orden ascendiente o descendientes según uno o varios campos en Pandas, de la siguiente manera:
-
-```{python}
 # Ordenar los datos por el nivel de Ozono en el Noroeste de mayor a menor
-df_imeca.sort_values(by='Noroeste Ozono', ascending=False)
+df_imeca.sort_values(by='Noroeste Ozono', ascending=False).head(3)
 ```
 
-## Guardado de resultados
 
-Después del preprocesamiento, deberíamos guardar el dataframe (separado de los datos en bruto, por supuesto). 
+## Visualizaciones temporales
 
-Aunque se puede guardar en .csv o .xlsx, lo más común es guardarlo en formato .parquet, que acelerará bastante su carga en Pandas a futuro:
-
-```python
-df_imeca.to_parquet("data/imeca1996_2022.parquet")
-```
-
-Dependiendo del formato de los valores, es posible que no puedan ser contenidos en un parquet. Aquí resulta útil convertir a un archivo pickle:
-
-```python
-df_imeca.to_pickle("data/imeca1996_2022.pkl")
-```
-
-## Análisis descriptivo
-
-Con el método `describe()`, podemos calcular estadísticas descriptivas básicas: esto incluye la media, la mediana, el minimo, el maximo, y la desviación estándar.
+¿A lo largo de los años, la contaminación tiene una tendencia creciente o decreciente?
+Podemos emplear una visualización sencilla para responder esta incognita.
 
 ```{python}
 #| echo: true
-df_imeca.describe()
-```
-
----
-
-Podemos usar las máscaras anteriormente descritas si queremos ver estas estadísticas solo para determinadas columnas o periodos de tiempo.
-
-```{python}
-#| echo: true
-df_imeca[sureste_columns][df_imeca['Fecha-Hora'] > "2010-01-01"].describe()
-```
-
-## Histogramas mediante Matplotlib
-
-Un **histograma** representa de manera gráfica, con barras, la cantidad de veces que se repite un valor a lo largo del conjunto de datos.
-
-```{python}
-import matplotlib.pyplot as plt
-#| echo: true
-
-df_imeca[['Noroeste Ozono', 'Noroeste dióxido de azufre']].hist(bins=30, figsize=(12, 5))
-plt.suptitle('Distribución de contaminantes en la región Noroeste', fontsize=16)
-plt.show()
-```
-
-## Distribución de frecuencias
-
-Sí queremos calcular la frecuencia de rangos de valores (o intervalos), podemos usar los metodos `value_counts` o `cut` antes de graficar..
-
-```{python}
-#| echo: true 
-df_imeca['Noroeste Ozono'].value_counts(bins=10).plot()
-```
-
-## Clasificación de datos numéricos
-
-Dependiendo del tipo de análisis o herramientas que se deseen utilizar para este, puede ser necesaria la creación de categorias dentro del conjunto de datos. 
-
-```{python}
-#| echo: true
-
-# Aplicar una función que clasifique la calidad del aire en 'Buena', 'Mala', 'Peligrosa'
-# Estas clasificaciones vienen de la Agencia de Protección Ambiental de Estados Unidos, y son distintas para cada campo.
-def clasificar_calidad(pm10):
-    if pm10 < 50:
-        return 'Buena'
-    elif 50 <= pm10 < 100:
-        return 'Mala'
-    else:
-        return 'Peligrosa'
-
-sureste_pm10_clasificado = df_imeca['Sureste PM10'].apply(clasificar_calidad)
-sureste_pm10_clasificado
-```
-
----
-
-```{python}
-#| echo: true
-sureste_pm10_clasificado.value_counts().plot(kind='bar')
-
-```
-
-## Codificación de variables categóricas:
-
-Para algunas tareas de predicción, es necesario transformar variables categóricas a númericas. Una tecnica común es la codificación one-hot, que convierte estás a una mascara de bits:
-
-```{python}
-#| echo: true
-# Convertir las variables categóricas a variables dummy (one-hot encoding)
-df_ohotest = pd.DataFrame.copy(df_imeca)
-df_ohotest['Noreste PM10'] = df_ohotest['Noreste PM10'].apply(clasificar_calidad)
-df_with_dummies = pd.get_dummies(df_ohotest, columns=['Noreste PM10'])
-df_with_dummies[df_with_dummies.columns[-3:]]
-
-```
-
-## Generar matrices de correlación
-
-Una matriz de correlación mide la dependencia lineal entre cada par de variables en un conjunto de datos. 
-
-Es una herramienta visual importante para identificar relaciones lineales fuertes (positivas o negativas) entre variables.
-
-Esta medida de correlación se lee de la siguiente manera:
-
-- Si es cercano a 1, indica que cuando una de las variables sube, la otra también.
-
-- Si es cercano a -1, indica que una variable baja cuando la otra sube. 
-
-- Si es cercano a 0, indica que no hay correlación entre las variables.
-
----
-
-```{python}
-#| echo: true
-# Calcular la matriz de correlación para las variables numéricas en el dataframe
-correlacion = df_imeca[
-    ["Noroeste Ozono", "Noroeste PM10", "Centro Ozono", "Centro PM10", "Sureste PM25"]
-].corr()
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(14, 3))
-sns.heatmap(correlacion, annot=True, cmap="coolwarm", linewidths=0.5)
-plt.title(
-    "Matriz de Correlación entre Contaminantes en Diferentes Regiones", fontsize=16
-)
-plt.show()
-```
-
-## Generar coeficientes de correlación
-
-- El coeficiente de **Pearson** mide la relación lineal entre dos variables continuas. Asume que los datos son normalmente distribuidos.
-
-```{python}
-#| echo: true
-pearson_corr = df_imeca["Noroeste Ozono"].corr(
-    df_imeca["Noroeste PM10"], method="pearson"
-)
-print(f"Correlación de Pearson entre Noroeste Ozono y Noroeste PM10: {pearson_corr}")
-```
-
-Esta correlación se lee igual que en el ultimo ejemplo. Por lo tanto, aquí podemos ver que no hay correlación entre estás dos variables. 
-
----
-
-```{python}
-#| echo: true
-pearson_corr = df_imeca["Noroeste PM10"].corr(
-    df_imeca["Noroeste PM25"], method="pearson"
-)
-print(f"Correlación de Pearson entre Noroeste PM10 y Noroeste PM25: {pearson_corr}")
-```
-
-PM10 y PM25 son dos variables que miden esencialmente dos tamaños de lo mismo (particulas, de diametro de 1.0 µm y 2.5 µm, respectivamente), así que es esperable que tengan una correlación positiva. 
-
-::: {.notes}
-- El coeficiente de **Spearman** mide de manera no paramétrica la correlación, usando el rango de los valores en lugar de los valores directamente. Por lo tanto, no importa que su distribución.
-:::
-
-## Relación entre variables continuas y categóricas
-
-Ya que estamos trabajando con un conjunto de variables continuas, primero debemos crear una variable categórica (niveles de ozono). Luego, graficaremos un boxplot para ver la distribución de otra variable continua según estas categorías.
-
-```{python}
-#| echo: true
-df_imeca['Niveles_Ozono'] = pd.cut(
-    df_imeca['Noroeste Ozono'], 
-    bins=[0, 50, 100, 150, np.inf], 
-    labels=['Bajo', 'Moderado', 'Alto', 'Muy Alto']
-)
-
-# Mostrar la distribución de la nueva variable categórica
-print(df_imeca['Niveles_Ozono'].value_counts())
-```
-
----
-
-```{python}
-#| echo: true
-plt.figure(figsize=(14, 4))
-sns.boxplot(x="Niveles_Ozono", y="Noroeste PM10", data=df_imeca)
-plt.title(
-    "Concentración de PM10 según los Niveles de Ozono en la Región Noroeste",
-    fontsize=16,
-)
-plt.xlabel("Niveles de Ozono")
-plt.ylabel("Concentración de PM10")
-plt.show()
-```
-
-## Análisis de tablas de contingencia
-
-Sí queremos observar la relación dos variables categóricas, podemos usar una tabla de contingencia, la cual nos dejará ver cuantas veces, según las filas, coinciden dos categorías determinadas.
-
-```{python}
-#| echo: true
-# Crear categorías para los niveles de PM10 en la región Noroeste
-df_imeca["Niveles_PM10"] = pd.cut(
-    df_imeca["Noroeste PM10"],
-    bins=[0, 50, 100, 150, 200],
-    labels=["Bajo", "Moderado", "Alto", "Muy Alto"],
-)
-
-tabla_contingencia = pd.crosstab(df_imeca["Niveles_Ozono"], df_imeca["Niveles_PM10"])
-print(tabla_contingencia)
-```
-
-## Análisis temporal
-
-Sí quisieramos, por ejemplo, ver si disminuye o incrementa la contaminación en el aire a lo largo del tiempo, podríamos ordenar los datos según la columna de fecha-hora y/o agruparlos según més, semana, etc. 
-
-## Agrupación según meses o años {.smaller}
-
-Al agrupar los datos, se necesita sacar la media de los contaminantes para cada periodo de agrupación (meses o años) para posteriormente observar que tendencias existen.
-
-```{python}
-# Agrupar por mes y calcular la media de los contaminantes
+# Realizamos una agrupación según més para ver tendencias según ese periodo de tiempo. 
 df_imeca_mes = (
     df_imeca.select_dtypes(include=["datetime", float])
     .resample("ME", on="Fecha-Hora")
     .mean()
 )
-
-# Mostrar las primeras filas del DataFrame agrupado por mes
-df_imeca_mes.head()
-```
-
-## Evolución temporal de los contaminantes
-
-Sí utilizamos el dataframe generado anteriormente en una gráfica de linea, veriamos una representación de la evolución temporal de los contaminantes,
-
-Por ejemplo, para el Ozono en la región Noroeste:
-
-```{python}
-import matplotlib.pyplot as plt
-
-# Graficar la evolución del Ozono en la región Noroeste a lo largo del tiempo
-plt.figure(figsize=(14, 5))
-plt.plot(
-    df_imeca_mes.index,
-    df_imeca_mes["Noroeste Ozono"],
-    label="Noroeste Ozono",
-    color="blue",
-)
-plt.title(
-    "Tendencia del Ozono en la Región Noroeste a lo largo del Tiempo", fontsize=16
-)
-plt.xlabel("Fecha")
-plt.ylabel("Concentración de Ozono")
-plt.grid(True)
-plt.legend()
-plt.show()
+df_imeca_mes['Noroeste PM10'].reset_index().set_index('Fecha-Hora').plot(figsize=(14,2))
 ```
 
 ---
 
-Podemos también generar una línea de tendencia, mediante una regresión lineal simple. De esa manera se verá de forma más clara si la tendencia es de disminución o aumento.
+En casos como este, donde resulta dificil observar su comportamiento a lo largo del tiempo a simple vista, podemos generar una linea de tendencia a partir de una regresión lineal simple.
 
 ```{python}
+#| echo: true
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from matplotlib import pyplot as plt
 
-df_imeca_mes = df_imeca_mes.dropna(subset=["Noroeste Ozono"])
+df_imeca_mes = df_imeca_mes.dropna(subset=["Noroeste PM10"])
 
+# Se usa el metodo 'reshape' para asegurar que sklean trate las variables como unidimensionales
 X = np.arange(len(df_imeca_mes)).reshape(-1, 1)  # Tiempo en forma de índice
-y = df_imeca_mes["Noroeste Ozono"].values.reshape(-1, 1)  # Ozono en la región Noroeste
+y = df_imeca_mes["Noroeste PM10"].values.reshape(-1, 1)  # Ozono en la región Noroeste
 
 modelo = LinearRegression()
 modelo.fit(X, y)
 
 predicciones = modelo.predict(X)
+```
 
+---
+
+```{python}
 plt.figure(figsize=(14, 5))
 plt.plot(
     df_imeca_mes.index,
-    df_imeca_mes["Noroeste Ozono"],
-    label="Noroeste Ozono",
+    df_imeca_mes["Noroeste PM10"],
+    label="Noroeste PM10",
     color="blue",
 )
 plt.plot(
@@ -555,21 +284,208 @@ plt.show()
 print(f"Pendiente de la tendencia: {modelo.coef_[0][0]:.4f}")
 ```
 
-## Comparación de periodos de tiempo
+Por el valor de la pendiente que fue encontrado, se comprueba que la tendencia para este contaminante en la región Noroeste es creciente.
 
-Si estás interesado en comparar periodos específicos (por ejemplo, años antes y después de una intervención), puedes agrupar los datos por años y calcular el promedio de los contaminantes en esos periodos:
+---
+
+¿Que años presentarón peor calidad del aire, en promedio? Aquí es prudente hacer un gráfico de barras:
 
 ```{python}
-df_imeca_anual = (
+#| echo: true
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+
+#| echo: true
+# Realizamos una agrupación según més para ver tendencias según ese periodo de tiempo. 
+df_imeca_year = (
     df_imeca.select_dtypes(include=["datetime", float])
-    .resample("YE", on="Fecha-Hora")
+    .resample("Y", on="Fecha-Hora")
     .mean()
 )
+noroeste_pm10_year = df_imeca_year['Noroeste PM10'].reset_index().set_index('Fecha-Hora')
+# Filtramos para un periodo de tiempo más pequeño (para ver con más claridad la gráfica resultante)
+noroeste_pm10_year = noroeste_pm10_year[(noroeste_pm10_year.index > '1999-12-01') & (noroeste_pm10_year.index < '2022-01-01')]
+```
 
-plt.figure(figsize=(14, 5))
-plt.bar(df_imeca_anual.index.year, df_imeca_anual["Noroeste Ozono"], color="skyblue")
-plt.title("Concentración Anual Promedio de Ozono en la Región Noroeste", fontsize=16)
-plt.xlabel("Año")
-plt.ylabel("Concentración de Ozono")
+---
+
+```{python}
+#| echo: true
+f, ax = plt.subplots()
+# Definición de gráfica de barra
+ax.bar(noroeste_pm10_year.index, noroeste_pm10_year.squeeze(), width=160, edgecolor='black')
+# Definición de leyenda
+ax.set_title('Impacto promedio del contaminante PM10 en el Noroeste por año')
+ax.set_ylabel("ICA")
+# Formateando años en el eje X correctamente
+ax.xaxis.set_major_locator(mpl.dates.YearLocator())
+ax.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m'))
+plt.xticks(rotation = 30)
+f.set_size_inches(16,3)
 plt.show()
 ```
+
+## Comparación de categorías
+
+En el preprocesamiento del dataset, se crearon categorías de calidad del aire a partir de las columnas numéricas. Estás son: *Buena, Mediocre, Mala, y Peligrosa*. Se toman a partir de la misma definición del Indice de Calidad del Aire (de parte del EPA USA).
+
+Podemos usar estas categorías para comparar cuales regiones tienen más ocurrencias de una calidad de aire *peligrosa* a lo largo del año. 
+
+---
+
+```{python}
+#| echo: true
+regions = ["Noreste", "Noroeste", "Centro", "Sureste", "Suroeste"]
+
+quality_count_dfs = []
+
+for region in regions:
+    calidad = [i for i in df_imeca if region in i and "Calidad" in i]
+    value_counts = df_imeca[calidad][df_imeca['Fecha-Hora'].dt.year == 2020].apply(pd.Series.value_counts, dropna=True).replace(np.nan, 0)
+    value_counts = value_counts.sum(axis=1).rename(region)
+    quality_count_dfs.append(value_counts)
+
+quality_count_df = pd.DataFrame(quality_count_dfs)
+quality_count_df = quality_count_df.pivot_table(columns=regions)
+quality_count_df
+```
+
+---
+
+```{python}
+#| echo: true
+quality_count_df.plot(kind='bar',
+        title='Comparación de la calidad del aire entre regiones (2020)', figsize=(16,5))
+```
+
+---
+
+¿Que contaminantes presentan un mayor riesgo para la población? Podemos hacer una comparación similar, pero según contaminantes en lugar de según regiones:
+
+```{python}
+#| echo: true
+regions = ["Ozono", "dióxido de azufre", "dióxido de nitrógeno", "monóxido de carbono", "PM10", "PM25"]
+
+quality_count_dfs = []
+
+for region in regions:
+    calidad = [i for i in df_imeca if region in i and "Calidad" in i]
+    value_counts = df_imeca[calidad][df_imeca['Fecha-Hora'].dt.year == 2020].apply(pd.Series.value_counts, dropna=True).replace(np.nan, 0)
+    value_counts = value_counts.sum(axis=1).rename(region)
+    quality_count_dfs.append(value_counts)
+
+quality_count_df = pd.DataFrame(quality_count_dfs)
+
+```
+
+---
+
+```{python}
+#| echo: true
+quality_count_df.pivot_table(columns=regions).plot(kind='bar',
+        title='Comparación del impacto en la calidad del aire (2020)', figsize=(16,5))
+```
+
+## Análisis de correlaciones
+
+¿Existe alguna correlación, negativa o positiva, entre la presencia de los contaminantes, o entre regiones? Sí usamos campos númericos, una aproximación sencilla para responder esta pregunta es la **matriz de correlación**. 
+
+```python
+# Calcular la matriz de correlación para las variables numéricas en el dataframe
+import seaborn as sns
+
+# Agarramos varias columnas y le aplicamos el metodo .corr(), que por defecto usa 
+# Pearson para calcular la correlación.
+correlacion = df_imeca[
+    ["Noroeste Ozono", "Noroeste PM10", "Centro Ozono", "Centro PM10", "Sureste PM25"]
+].corr()
+
+plt.figure(figsize=(15, 5))
+
+# Creación de heatmap mediante seaborn
+sns.heatmap(correlacion, annot=True, cmap="coolwarm", linewidths=0.5)
+plt.title(
+    "Matriz de Correlación entre Contaminantes en Diferentes Regiones", fontsize=16
+)
+plt.show()
+```
+
+---
+
+```{python}
+# Calcular la matriz de correlación para las variables numéricas en el dataframe
+import seaborn as sns
+
+# Agarramos varias columnas y le aplicamos el metodo .corr(), que por defecto usa Pearson para calcular la correlación
+correlacion = df_imeca[
+    ["Noroeste Ozono", "Noroeste PM10", "Centro Ozono", "Centro PM10", "Sureste PM25"]
+].corr()
+
+plt.figure(figsize=(15, 7))
+
+# Creación de heatmap mediante seaborn
+sns.heatmap(correlacion, annot=True, cmap="coolwarm", linewidths=0.5)
+plt.title(
+    "Matriz de Correlación entre Contaminantes en Diferentes Regiones", fontsize=16
+)
+plt.show()
+```
+
+---
+
+Otra forma de observar relaciones entre multiples variables númericas es un **diagrama de dispersión**.
+
+Al gráficar una variable contra otra, podemos, según rasgos que presente la visualización resultante, ver si están correlacionadas positiva o negativamente.
+
+Además, es útil para identificar otros patrones en los datos, como outliers, clusters, o huecos.
+
+---
+
+```python
+df_imeca_feb2009 = df_imeca[(df_imeca['Fecha-Hora'] > '2009-01-31') & (df_imeca['Fecha-Hora'] < '2009-03-01')]
+
+
+x = df_imeca_feb2009['Sureste Ozono']
+y = df_imeca_feb2009['Sureste monóxido de carbono']
+colors = np.random.rand(x.shape[0])
+
+plt.figure(figsize=(15,5))
+plt.scatter(x, y, c=colors)
+plt.title('ICA del Ozono y del Monóxido de Carbono en la región Sureste')
+plt.xlabel('Sureste Ozono')
+plt.ylabel('Sureste Monóxido de Carbono')
+plt.grid(True)
+plt.legend()
+plt.show()
+```
+
+---
+
+```{python}
+df_imeca_feb2009 = df_imeca[(df_imeca['Fecha-Hora'] > '2009-01-31') & (df_imeca['Fecha-Hora'] < '2009-03-01')]
+
+
+x = df_imeca_feb2009['Sureste Ozono']
+y = df_imeca_feb2009['Sureste monóxido de carbono']
+colors = np.random.rand(x.shape[0])
+
+plt.figure(figsize=(15,5))
+plt.scatter(x, y, c=colors)
+plt.title('ICA del Ozono y del Monóxido de Carbono en la región Sureste')
+plt.xlabel('Sureste Ozono')
+plt.ylabel('Sureste Monóxido de Carbono')
+plt.grid(True)
+plt.legend()
+plt.show()
+```
+
+---
+
+Alternativamente, si estamos lidiando con datos categóricos, podemos generar una **tabla de contingencia**, que nos mostrará cuantas veces dos campos coinciden en sus categórias:
+
+```{python}
+#| echo: true
+tabla_contingencia = pd.crosstab(df_imeca["Sureste Ozono Calidad"], df_imeca["Sureste PM10 Calidad"])
+print(tabla_contingencia)
+```
+
